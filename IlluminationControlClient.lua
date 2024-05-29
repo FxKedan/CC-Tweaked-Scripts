@@ -6,6 +6,20 @@ local MainProtocol = "MainFacilityControl"
 local commandidOn, commandidOff = "on.light.X", "off.light.X"
 rednet.open("top")
 
+function ApplyLastState()
+    if LastState == "on" then
+        rs.setOutput(rsSide, true)
+    elseif LastState == "off" then
+        rs.setOutput(rsSide, false)
+    else
+    end
+end
+
+local file = fs.open("LastState.txt", "r")
+LastState = file.readAll()
+file.close()
+ApplyLastState()
+
 term.clear()
 term.setCursorPos(1,1)
 term.setTextColor(color)
@@ -35,6 +49,7 @@ while true do
         if message == "false" then
             rs.setOutput(rsSide, false)
         elseif message == "true" then
+            ApplyLastState()
             break
         else
             rs.setOutput(rsSide, false)
@@ -46,8 +61,13 @@ while true do
     if message == commandidOn and hostKeyR == hostKey then
         rs.setOutput(rsSide, true)
         rednet.send(id, "success", MainProtocol)
+        LastStateW = "on"
     elseif message == commandidOff and hostKeyR == hostKey then
         rs.setOutput(rsSide, false)
         rednet.send(id, "success", MainProtocol)
+        LastStateW = "off"
     end
+    local file = fs.open("LastState.txt", "w+")
+    file.write(LastStateW)
+    file.close()
 end

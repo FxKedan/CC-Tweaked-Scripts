@@ -15,7 +15,7 @@ function Communication()
         rednet.send(Id, hostKey, "hostKey")
         rednet.send(Id, Message, MainProtocol)
         local id, message = rednet.receive(MainProtocol, 2)
-        if message == "success" then
+        if message == "success" and id == Id then
                         term.setCursorPos(22,12)
                         textutils.slowPrint("Success!")
                         sleep(readTime)
