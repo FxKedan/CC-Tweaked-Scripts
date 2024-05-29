@@ -19,7 +19,6 @@ end
 
 local file = fs.open("LastState.txt", "r")
 LastState = file.readAll()
-file.close()
 ApplyLastState()
 
 term.clear()
@@ -69,7 +68,14 @@ while true do
         rednet.send(id, "success", MainProtocol)
         LastStateW = "off"
     end
-    local file = fs.open("LastState.txt", "w+")
-    file.write(LastStateW)
-    file.close()
+    
+    if LastStateW == "on" or "off" then
+        local file = fs.open("LastState.txt", "w+")
+        file.write(LastStateW)
+        file.close()
+    else
+    end
+    
+    local file = fs.open("LastState.txt", "r")
+    LastState = file.readAll()
 end
