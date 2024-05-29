@@ -1,4 +1,5 @@
 --Place your sound file in the "data" folder and rename it to "sound.dfpwm".
+--Sync the length of the sound file with the slowPrint rate you specified in the Host. The modem sound file is 13 seconds long so I set the rate to 1. The loading bar has 13 characters so the print takes 13 seconds.
 
 local color = colors.lime
 local hostKey = "@z4dgHmDkAj5FqL"
