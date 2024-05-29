@@ -38,6 +38,7 @@ term.setCursorPos(18,10)
 print("[             ]")
 term.setCursorPos(19,10)
 textutils.slowPrint("/////////////", 1)
+sleep(readTime)
 
 term.clear()
 term.setCursorPos(1,1)
