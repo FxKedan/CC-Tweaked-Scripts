@@ -3,7 +3,7 @@ local rsSide = "back"
 local hostKey = "@z4dgHmDkAj5FqL"
 local PowerStatusProtocol = "PowerStatus"
 local MainProtocol = "MainFacilityControl"
-local commandidOn, commandidOff = "on.light.X", "off.light.X"
+local commandidOn, commandidOff = "on.light.RoomX", "off.light.RoomX"
 rednet.open("top")
 
 function ApplyLastState()
