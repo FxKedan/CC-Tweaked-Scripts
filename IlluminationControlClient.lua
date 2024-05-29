@@ -1,3 +1,5 @@
+--Replace "RoomX" with the room name you specified in the Host.
+
 local color = colors.lime
 local rsSide = "back"
 local hostKey = "@z4dgHmDkAj5FqL"

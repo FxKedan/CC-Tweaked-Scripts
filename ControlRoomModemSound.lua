@@ -1,3 +1,5 @@
+--Place your sound file in the "data" folder and rename it to "sound.dfpwm".
+
 local color = colors.lime
 local hostKey = "@z4dgHmDkAj5FqL"
 local MainProtocol = "MainFacilityControl"
