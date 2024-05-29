@@ -1,3 +1,5 @@
+--Replace "boil.on" and "boil.off" with the command id's you specified in the Host.
+
 local color = colors.lime
 local rsSide = "bottom"
 local hostKey = "@z4dgHmDkAj5FqL"
