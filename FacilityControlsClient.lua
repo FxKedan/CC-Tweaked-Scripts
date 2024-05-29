@@ -1,4 +1,5 @@
 --Replace "boil.on" and "boil.off" with the command id's you specified in the Host.
+--Create LastState.txt in the root directory before starting the program for the first time. Just save it as an empty file.
 
 local color = colors.lime
 local rsSide = "bottom"
