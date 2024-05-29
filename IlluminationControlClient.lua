@@ -64,17 +64,16 @@ while true do
         rs.setOutput(rsSide, true)
         rednet.send(id, "success", MainProtocol)
         LastStateW = "on"
+        local file = fs.open("LastState.txt", "w+")
+        file.write(LastStateW)
+        file.close()
     elseif message == commandidOff and hostKeyR == hostKey then
         rs.setOutput(rsSide, false)
         rednet.send(id, "success", MainProtocol)
         LastStateW = "off"
-    end
-    
-    if LastStateW == "on" or "off" then
         local file = fs.open("LastState.txt", "w+")
         file.write(LastStateW)
         file.close()
-    else
     end
 
     local file = fs.open("LastState.txt", "r")
