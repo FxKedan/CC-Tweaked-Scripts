@@ -97,14 +97,14 @@ if input == password then
                 term.setCursorPos(15,10)
                 input = read()
 
-                if string.find(input, "startup" or "open") then
+                if string.find(input, "%f[%w_]startup%f[^%w_]") or string.find(input, "%f[%w_]open%f[^%w_]") then
                     CmdStat = "on"
-                elseif string.find(input, "shutdown" or "close") then
+                elseif string.find(input, "%f[%w_]shutdown%f[^%w_]") or string.find(input, "%f[%w_]close%f[^%w_]") then
                     CmdStat = "off"
                 else
                 end
 
-                if CmdStat == ("on" or "off") then
+                if CmdStat == "on" or CmdStat == "off" then
                     CmdStat2 = true
                 else
                     CmdStat2 = false
@@ -112,12 +112,12 @@ if input == password then
 
                 --rednet start
 
-                if string.find(input, "boiler2") and (CmdStat2 == true) then
-                    Id, Message = id2, ""..CmdStat..".boil2"
+                if string.find(input, "%f[%w_]boiler%f[^%w_]") and (CmdStat2 == true) then
+                    Id, Message = id2, ""..CmdStat..".boil"
                     Communication()
 
-                elseif string.find(input, "boiler") and (CmdStat2 == true) then
-                    Id, Message = id1, ""..CmdStat..".boil"
+                elseif string.find(input, "%f[%w_]boiler2%f[^%w_]") and (CmdStat2 == true) then
+                    Id, Message = id1, ""..CmdStat..".boil2"
                     Communication()
 
                 --rednet end
