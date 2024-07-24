@@ -8,8 +8,8 @@ os.pullEvent = os.pullEventRaw
 rednet.open("top")
 
 --List of possible receivers
-local id1 = 1
-local id2 = 5
+local id1, commandidOn1, commandidOff1, commandOn1, commandOff1 = 1, "boil.on", "boil.off", "startup boiler", "shutdown boiler"
+local id2, commandidOn2, commandidOff2, commandOn2, commandOff2 = 2, "boil.on", "boil.off", "startup boiler", "shutdown boiler"
 
 function Communication()
         rednet.send(Id, hostKey, "hostKey")
@@ -70,7 +70,6 @@ if input == password then
         textutils.slowPrint("Password Recognised.")
         sleep(readTime)
         while true do
-                CmdStat = nil
                 term.clear()
                 term.setCursorPos(1,1)
                 term.setTextColor(color)
@@ -96,30 +95,20 @@ if input == password then
 
                 term.setCursorPos(15,10)
                 input = read()
-
-                if string.find(input, "%f[%w_]startup%f[^%w_]") or string.find(input, "%f[%w_]open%f[^%w_]") then
-                    CmdStat = "on"
-                elseif string.find(input, "%f[%w_]shutdown%f[^%w_]") or string.find(input, "%f[%w_]close%f[^%w_]") then
-                    CmdStat = "off"
-                else
-                end
-
-                if CmdStat == "on" or CmdStat == "off" then
-                    CmdStat2 = true
-                else
-                    CmdStat2 = false
-                end
-
                 --rednet start
+                if input == commandOn1 then
+                        Id, Message = id1, commandidOn1
+                        Communication()
+                        elseif input == commandOff1 then
+                                Id, Message = id1, commandidOff1
+                                Communication()
 
-                if string.find(input, "%f[%w_]boiler%f[^%w_]") and (CmdStat2 == true) then
-                    Id, Message = id2, ""..CmdStat..".boil"
-                    Communication()
-
-                elseif string.find(input, "%f[%w_]boiler2%f[^%w_]") and (CmdStat2 == true) then
-                    Id, Message = id1, ""..CmdStat..".boil2"
-                    Communication()
-
+                elseif input == commandOn2 then
+                        Id, Message = id2, commandidOn2
+                        Communication()
+                        elseif input == commandOff2 then
+                                Id, Message = id2, commandidOff2
+                                Communication()
                 --rednet end
                 elseif input == exitCode then
                         term.setCursorPos(6,12)
