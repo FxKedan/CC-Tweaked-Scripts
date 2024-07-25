@@ -164,6 +164,7 @@ if input == password then
                 elseif input == "help" then
                         HelpUI()
                         os.pullEvent("key")
+                        --Page 2, 3 etc.
                         goto continue
                 else
                         term.setCursorPos(18,12)
