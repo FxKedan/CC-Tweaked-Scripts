@@ -50,6 +50,7 @@ while true do
         local id, message = rednet.receive(PowerStatusProtocol, 0.5)
         if message == "false" then
             rs.setOutput(rsSide, false)
+            --Implement emergency lights here
         elseif message == "true" then
             ApplyLastState()
             break
