@@ -130,12 +130,38 @@ if input == password then
                         sleep(readTime)
                         os.reboot()
 
+                elseif input == "help" then
+                        term.clear()
+                        term.setCursorPos(1,1)
+                        term.setTextColor(color)
+                        print("---------------------------------------------------")
+                        print("------------------Command Library------------------")
+                        print("---------------------------------------------------")
+                        print("--    ROBCO INDUSTRIES (TM) TERMLINK PROTOCOL    --")
+                        print("--                                               --")
+                        print("-- startup <machine>                             --")
+                        print("-- shutdown <*>                                  --")
+                        print("-- open <door/room>                              --")
+                        print("-- close <*>                                     --")
+                        print("-- help                                          --")
+                        print("-- get_id                                        --")
+                        print("-- lock                                          --")
+                        print("--                                               --")
+                        print("--                                               --")
+                        print("--           Press any key to continue           --")
+                        print("--                                               --")
+                        print("-- ROBCO / VAULT-TEC                UI Model 1.3 --")
+                        print("---------------------------------------------------")
+                        print("---------------------------------------------------")
+                        os.pullEvent("key")
+                        goto continue
                 else
                         term.setCursorPos(18,12)
                         term.setTextColor(colors.red)
                         textutils.slowPrint("Invalid Command.")
                         sleep(readTime)
                 end
+                ::continue::
         end
 
 elseif input == exitCode then
