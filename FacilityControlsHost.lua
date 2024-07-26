@@ -5,7 +5,7 @@ local readTime = 1
 local hostKey = "@z4dgHmDkAj5FqL"
 local MainProtocol = "MainFacilityControl"
 os.pullEvent = os.pullEventRaw
-rednet.open("top")
+peripheral.find("modem", rednet.open)
 
 --List of possible receivers
 local id1, commandidOn1, commandidOff1, commandOn1, commandOff1 = 1, "boil.on", "boil.off", "startup boiler", "shutdown boiler"

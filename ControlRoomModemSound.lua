@@ -5,7 +5,7 @@ local color = colors.lime
 local hostKey = "@z4dgHmDkAj5FqL"
 local MainProtocol = "MainFacilityControl"
 local commandid = "speaker.connecting"
-rednet.open("top")
+peripheral.find("modem", rednet.open)
 
 term.clear()
 term.setCursorPos(1,1)

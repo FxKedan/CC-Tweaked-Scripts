@@ -6,7 +6,7 @@ local hostKey = "@z4dgHmDkAj5FqL"
 local MainProtocol = "MainFacilityControl"
 local commandidOpen, commandidClose, commandidLockdown = "door.x.open", "door.x.close", "facility.lockdown"
 local seq_gearshift = peripheral.find("Create_SequencedGearshift")
-rednet.open("top")
+peripheral.find("modem", rednet.open)
 
 term.clear()
 term.setCursorPos(1,1)

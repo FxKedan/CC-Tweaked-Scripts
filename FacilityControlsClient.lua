@@ -6,7 +6,7 @@ local rsSide = "bottom"
 local hostKey = "@z4dgHmDkAj5FqL"
 local MainProtocol = "MainFacilityControl"
 local commandidOn, commandidOff = "boil.on", "boil.off"
-rednet.open("top")
+peripheral.find("modem", rednet.open)
 
 function ApplyLastState()
     if LastState == "on" then
