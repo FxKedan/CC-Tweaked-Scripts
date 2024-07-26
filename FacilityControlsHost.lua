@@ -28,6 +28,23 @@ function Communication()
 
 end
 
+function Communication_broadcast()
+        rednet.broadcast(hostKey, "hostKey")
+        rednet.broadcast(Message, MainProtocol)
+        local id, message = rednet.receive(MainProtocol, 2)
+        if message == "success" then
+                        term.setCursorPos(22,12)
+                        textutils.slowPrint("Success!")
+                        sleep(readTime)
+        else
+                        term.setCursorPos(19,12)
+                        term.setTextColor(colors.red)
+                        textutils.slowPrint("Error! Timeout")
+                        sleep(readTime)
+        end
+
+end
+
 function PasswordUI()
         term.clear()
         term.setCursorPos(1,1)
@@ -140,6 +157,11 @@ if input == password then
                         elseif input == commandOff2 then
                                 Id, Message = id2, commandidOff2
                                 Communication()
+
+                elseif input == "lockdown" then
+                        Message = "facility.lockdown"
+                        Communication_broadcast()
+
                 --rednet end
                 elseif input == exitCode then
                         term.setCursorPos(6,12)
