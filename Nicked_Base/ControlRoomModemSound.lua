@@ -2,7 +2,7 @@
 --Sync the length of the sound file with the slowPrint rate you specified in the Host. The modem sound file is 13 seconds long so I set the rate to 1. The loading bar has 13 characters so the print takes 13 seconds.
 
 local color = colors.lime
-local MainProtocol = "MainFacilityControl"
+local Protocol = "Arcdoor_Inc_Main"
 local commandid = "speaker.connecting"
 peripheral.find("modem", rednet.open)
 
@@ -30,7 +30,7 @@ print("---------------------------------------------------")
 print("---------------------------------------------------")
 
 while true do
-    local id, message = rednet.receive(MainProtocol, nil)
+    local id, message = rednet.receive(Protocol, nil)
     if message == commandid then
         local dfpwm = require("cc.audio.dfpwm")
         local speaker = peripheral.find("speaker")

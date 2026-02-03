@@ -2,7 +2,7 @@
 
 local color = colors.lime
 local rsSide = "bottom"
-local MainProtocol = "MainFacilityControl"
+local Protocol = "Arcdoor_Inc_Main"
 local commandidOpen, commandidClose, commandidLockdown = "door.x.open", "door.x.close", "facility.lockdown"
 local seq_gearshift = peripheral.find("Create_SequencedGearshift")
 peripheral.find("modem", rednet.open)
@@ -31,15 +31,15 @@ print("---------------------------------------------------")
 print("---------------------------------------------------")
 
 while true do
-    local id, message = rednet.receive(MainProtocol, nil)
+    local id, message = rednet.receive(Protocol, nil)
     if message == commandidOpen then
         seq_gearshift.move(5,-1)
-        rednet.send(id, "success", MainProtocol)
+        rednet.send(id, "success", Protocol)
     elseif message == commandidClose then
         seq_gearshift.move(5,1)
-        rednet.send(id, "success", MainProtocol)
+        rednet.send(id, "success", Protocol)
     elseif message == commandidLockdown then
         seq_gearshift.move(5,1)
-        rednet.send(id, "success", MainProtocol)
+        rednet.send(id, "success", Protocol)
     end
 end

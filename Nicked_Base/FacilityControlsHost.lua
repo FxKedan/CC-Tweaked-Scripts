@@ -2,7 +2,7 @@ local color = colors.lime
 local password = "pfoten"
 local exitCode = "potato"
 local readTime = 1
-local Protocol = "MainFacilityControl"
+local Protocol = "Arcdoor_Inc_Main"
 os.pullEvent = os.pullEventRaw
 peripheral.find("modem", rednet.open)
 
