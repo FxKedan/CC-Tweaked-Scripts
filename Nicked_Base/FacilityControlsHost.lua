@@ -3,8 +3,15 @@ local password = "pfoten"
 local exitCode = "potato"
 local readTime = 1
 local Protocol = "Arcdoor_Inc_Main"
+local FastBoot = true
 os.pullEvent = os.pullEventRaw
 peripheral.find("modem", rednet.open)
+
+if FastBoot then
+  BootTime = 100
+else
+  BootTime = 1
+end
 
 --Table of possible receivers
 local devices = {
@@ -24,6 +31,20 @@ local devices = {
   },
 }
 
+local function animateDots(x, y, base, duration, txtColor)
+        local maxDots = 3
+        local interval = 0.2
+        local iterations = math.max(1, math.floor(duration / interval))
+        for i = 1, iterations do
+                local count = (i - 1) % (maxDots + 1)
+                local dots = string.rep(".", count)
+                term.setCursorPos(x, y)
+                if txtColor then term.setTextColor(txtColor) end
+                term.write(base .. dots .. string.rep(" ", maxDots - #dots))
+                sleep(interval)
+        end
+end
+
 function Communication(targetId, msg)
         rednet.send(targetId, msg, Protocol)
         local respId, respMsg = rednet.receive(Protocol, 2)
@@ -32,6 +53,7 @@ function Communication(targetId, msg)
                         textutils.slowPrint("Success!")
                         sleep(readTime)
         else
+                        animateDots(19, 12, "Sending", 5, color)
                         term.setCursorPos(19,12)
                         term.setTextColor(colors.red)
                         textutils.slowPrint("Error! Timeout")
@@ -42,10 +64,7 @@ end
 
 function Communication_broadcast(msg)
         rednet.broadcast(msg, Protocol)
-        term.setCursorPos(18,12)
-        term.setTextColor(color)
-        textutils.slowPrint("Broadcasting...")
-        sleep(5)
+        animateDots(18, 12, "Broadcasting", 5, color)
 end
 
 function PasswordUI()
@@ -131,7 +150,7 @@ rednet.send(9, "speaker.connecting", Protocol)
 term.setCursorPos(18,10)
 print("[             ]")
 term.setCursorPos(19,10)
-textutils.slowPrint("/////////////", 1)
+textutils.slowPrint("/////////////", BootTime)
 sleep(readTime)
 
 PasswordUI()
