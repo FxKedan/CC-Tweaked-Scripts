@@ -32,9 +32,9 @@ function Communication_broadcast()
         rednet.broadcast(hostKey, "hostKey")
         rednet.broadcast(Message, Protocol)
         
-        term.setCursorPos(9,12)
+        term.setCursorPos(18,12)
         term.setTextColor(color)
-        textutils.slowPrint("Broadcasting lockdown command...")
+        textutils.slowPrint("Broadcasting...")
         sleep(5)        
 end
 
