@@ -10,7 +10,7 @@ term.clear()
 term.setCursorPos(1,1)
 term.setTextColor(color)
 print("---------------------------------------------------")
-print("-------------FACILITY CONTROLS CLIENT--------------")
+print("------------------SPEAKER CLIENT-------------------")
 print("---------------------------------------------------")
 print("--   ARCDOOR INDUSTRIES (TM) TERMLINK PROTOCOL   --")
 print("--                                               --")
@@ -43,7 +43,6 @@ while true do
                 os.pullEvent("speaker_audio_empty")
             end
         end
-
     else
     end
 end
