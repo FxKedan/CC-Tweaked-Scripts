@@ -8,7 +8,7 @@ os.pullEvent = os.pullEventRaw
 peripheral.find("modem", rednet.open)
 
 if FastBoot then
-  BootTime = 100
+  BootTime = 10
 else
   BootTime = 1
 end
