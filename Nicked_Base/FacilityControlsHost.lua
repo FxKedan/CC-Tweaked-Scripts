@@ -28,7 +28,6 @@ end
 
 function Communication_broadcast()
         rednet.broadcast(Message, Protocol)
-        
         term.setCursorPos(18,12)
         term.setTextColor(color)
         textutils.slowPrint("Broadcasting...")
