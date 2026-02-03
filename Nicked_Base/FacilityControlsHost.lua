@@ -6,14 +6,28 @@ local Protocol = "Arcdoor_Inc_Main"
 os.pullEvent = os.pullEventRaw
 peripheral.find("modem", rednet.open)
 
---List of possible receivers
-local id1, commandidOn1, commandidOff1, commandOn1, commandOff1 = 1, "example.on", "example.off", "startup example", "shutdown example"
-local id2, commandidOn2, commandidOff2, commandOn2, commandOff2 = 2, "example.on", "example.off", "startup example", "shutdown example"
+--Table of possible receivers
+local devices = {
+  [1] = {
+    id = 1,
+    onCommandId = "example.on",
+    offCommandId = "example.off",
+    onText = "startup example",
+    offText = "shutdown example",
+  },
+  [2] = {
+    id = 2,
+    onCommandId = "example.on",
+    offCommandId = "example.off",
+    onText = "startup example",
+    offText = "shutdown example",
+  },
+}
 
 function Communication()
-        rednet.send(Id, Message, Protocol)
+        rednet.send(targetId, Message, Protocol)
         local id, message = rednet.receive(Protocol, 2)
-        if message == "success" and id == Id then
+        if message == "success" and id == targetId then
                         term.setCursorPos(22,12)
                         textutils.slowPrint("Success!")
                         sleep(readTime)
@@ -132,18 +146,18 @@ if input == password then
                 term.setCursorPos(15,10)
                 input = read()
                 --rednet start
-                if input == commandOn1 then
-                        Id, Message = id1, commandidOn1
+                if input == devices[1].onText then
+                        targetId, Message = devices[1].id, devices[1].onCommandId
                         Communication()
-                        elseif input == commandOff1 then
-                                Id, Message = id1, commandidOff1
+                        elseif input == devices[1].offText then
+                                targetId, Message = devices[1].id, devices[1].offCommandId
                                 Communication()
 
-                elseif input == commandOn2 then
-                        Id, Message = id2, commandidOn2
+                elseif input == devices[2].onText then
+                        targetId, Message = devices[2].id, devices[2].onCommandId
                         Communication()
-                        elseif input == commandOff2 then
-                                Id, Message = id2, commandidOff2
+                        elseif input == devices[2].offText then
+                                targetId, Message = devices[2].id, devices[2].offCommandId
                                 Communication()
 
                 elseif input == "lockdown" then
