@@ -49,12 +49,12 @@ function Communication(targetId, msg)
         rednet.send(targetId, msg, Protocol)
         local respId, respMsg = rednet.receive(Protocol, 2)
         if respMsg == "success" and respId == targetId then
-                        term.setCursorPos(22,12)
+                        term.setCursorPos(22,13)
                         textutils.slowPrint("Success!")
                         sleep(readTime)
         else
-                        animateDots(19, 12, "Sending", 5, color)
-                        term.setCursorPos(19,12)
+                        animateDots(19, 13, "Sending", 5, color)
+                        term.setCursorPos(19,13)
                         term.setTextColor(colors.red)
                         textutils.slowPrint("Error! Timeout")
                         sleep(readTime)
@@ -64,7 +64,7 @@ end
 
 function Communication_broadcast(msg)
         rednet.broadcast(msg, Protocol)
-        animateDots(18, 12, "Broadcasting", 5, color)
+        animateDots(18, 13, "Broadcasting", 5, color)
 end
 
 function PasswordUI()
@@ -82,7 +82,6 @@ function PasswordUI()
         print("--                                               --")
         print("--                  PASSWORD:                    --")
         print("--                  [      ]                     --")
-        print("--                                               --")
         print("--                                               --")
         print("--                                               --")
         print("--                                               --")
@@ -111,7 +110,6 @@ function CommandUI()
         print("--                                               --")
         print("--                                               --")
         print("--                                               --")
-        print("--                                               --")
         print("-- ARCDOOR / OMNI LABS           UI Model 2.1.37 --")
         print("---------------------------------------------------")
         print("---------------------------------------------------")
@@ -134,7 +132,6 @@ function HelpUI()
         print("-- get_id                                        --")
         print("-- lockdown                                      --")
         print("-- lock                                          --")
-        print("--                                               --")
         print("--           Press any key to continue           --")
         print("--                                               --")
         print("-- ARCDOOR / OMNI LABS           UI Model 2.1.37 --")
@@ -154,15 +151,15 @@ textutils.slowPrint("/////////////", BootTime)
 sleep(readTime)
 
 PasswordUI()
-term.setCursorPos(22,10)
+term.setCursorPos(22,11)
 local input = read("*")
 if input == password then
-        term.setCursorPos(16,12)
+        term.setCursorPos(16,13)
         textutils.slowPrint("Password Recognised.")
         sleep(readTime)
         while true do
                 CommandUI()
-                term.setCursorPos(15,10)
+                term.setCursorPos(15,11)
                 input = read()
                 -- rednet start: check devices table for matching commands
                 local handled = false
@@ -186,7 +183,7 @@ if input == password then
 
                         --rednet end
                         elseif input == exitCode then
-                                term.setCursorPos(6,12)
+                                term.setCursorPos(6,13)
                                 textutils.slowPrint("Exit Code Recognised. Exiting to Shell.")
                                 sleep(readTime)
                                 term.clear()
@@ -195,12 +192,12 @@ if input == password then
 
                         elseif input == "get_id" then
                                 local pcid = os.getComputerID()
-                                term.setCursorPos(11,12)
+                                term.setCursorPos(11,13)
                                 textutils.slowPrint("The id of this computer is "..pcid..".")
                                 sleep(readTime)
 
                         elseif input == "lock" then
-                                term.setCursorPos(17,12)
+                                term.setCursorPos(17,13)
                                 textutils.slowPrint("Locking Computer.")
                                 sleep(readTime)
                                 os.reboot()
@@ -211,7 +208,7 @@ if input == password then
                                 --Page 2, 3 etc.
                                 goto continue
                         else
-                                term.setCursorPos(18,12)
+                                term.setCursorPos(18,13)
                                 term.setTextColor(colors.red)
                                 textutils.slowPrint("Invalid Command.")
                                 sleep(readTime)
@@ -221,7 +218,7 @@ if input == password then
         end
 
 elseif input == exitCode then
-        term.setCursorPos(6,12)
+        term.setCursorPos(6,13)
         textutils.slowPrint("Exit Code Recognised. Exiting to Shell.")
         sleep(readTime)
         term.clear()
@@ -229,7 +226,7 @@ elseif input == exitCode then
         return
 
 else
-        term.setCursorPos(14,12)
+        term.setCursorPos(14,13)
         term.setTextColor(colors.red)
         textutils.slowPrint("Password not Recognised.")
         sleep(readTime)
