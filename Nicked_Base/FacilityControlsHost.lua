@@ -2,7 +2,6 @@ local color = colors.lime
 local password = "pfoten"
 local exitCode = "potato"
 local readTime = 1
-local hostKey = "@z4dgHmDkAj5FqL"
 local Protocol = "MainFacilityControl"
 os.pullEvent = os.pullEventRaw
 peripheral.find("modem", rednet.open)
@@ -12,7 +11,6 @@ local id1, commandidOn1, commandidOff1, commandOn1, commandOff1 = 1, "example.on
 local id2, commandidOn2, commandidOff2, commandOn2, commandOff2 = 2, "example.on", "example.off", "startup example", "shutdown example"
 
 function Communication()
-        rednet.send(Id, hostKey, "hostKey")
         rednet.send(Id, Message, Protocol)
         local id, message = rednet.receive(Protocol, 2)
         if message == "success" and id == Id then
@@ -29,7 +27,6 @@ function Communication()
 end
 
 function Communication_broadcast()
-        rednet.broadcast(hostKey, "hostKey")
         rednet.broadcast(Message, Protocol)
         
         term.setCursorPos(18,12)
@@ -117,7 +114,6 @@ term.clear()
 term.setTextColor(color)
 term.setCursorPos(19,8)
 print("Connecting...")
-rednet.send(9, hostKey, "hostKey")
 rednet.send(9, "speaker.connecting", Protocol)
 term.setCursorPos(18,10)
 print("[             ]")
