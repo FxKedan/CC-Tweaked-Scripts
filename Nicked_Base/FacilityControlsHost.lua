@@ -17,17 +17,17 @@ local devices = {
   },
   [2] = {
     id = 2,
-    onCommandId = "example.on",
-    offCommandId = "example.off",
-    onText = "startup example",
-    offText = "shutdown example",
+    onCommandId = "example2.on",
+    offCommandId = "example2.off",
+    onText = "startup example2",
+    offText = "shutdown example2",
   },
 }
 
-function Communication()
-        rednet.send(targetId, Message, Protocol)
-        local id, message = rednet.receive(Protocol, 2)
-        if message == "success" and id == targetId then
+function Communication(targetId, msg)
+        rednet.send(targetId, msg, Protocol)
+        local respId, respMsg = rednet.receive(Protocol, 2)
+        if respMsg == "success" and respId == targetId then
                         term.setCursorPos(22,12)
                         textutils.slowPrint("Success!")
                         sleep(readTime)
@@ -40,12 +40,12 @@ function Communication()
 
 end
 
-function Communication_broadcast()
-        rednet.broadcast(Message, Protocol)
+function Communication_broadcast(msg)
+        rednet.broadcast(msg, Protocol)
         term.setCursorPos(18,12)
         term.setTextColor(color)
         textutils.slowPrint("Broadcasting...")
-        sleep(5)        
+        sleep(5)
 end
 
 function PasswordUI()
@@ -103,7 +103,7 @@ function HelpUI()
         term.setCursorPos(1,1)
         term.setTextColor(color)
         print("---------------------------------------------------")
-        print("------------------Command Library------------------")
+        print("------------------COMMAND LIBRARY------------------")
         print("---------------------------------------------------")
         print("--   ARCDOOR INDUSTRIES (TM) TERMLINK PROTOCOL   --")
         print("--                                               --")
@@ -113,8 +113,8 @@ function HelpUI()
         print("-- close <*>                                     --")
         print("-- help                                          --")
         print("-- get_id                                        --")
+        print("-- lockdown                                      --")
         print("-- lock                                          --")
-        print("--                                               --")
         print("--                                               --")
         print("--           Press any key to continue           --")
         print("--                                               --")
@@ -145,56 +145,58 @@ if input == password then
                 CommandUI()
                 term.setCursorPos(15,10)
                 input = read()
-                --rednet start
-                if input == devices[1].onText then
-                        targetId, Message = devices[1].id, devices[1].onCommandId
-                        Communication()
-                        elseif input == devices[1].offText then
-                                targetId, Message = devices[1].id, devices[1].offCommandId
-                                Communication()
+                -- rednet start: check devices table for matching commands
+                local handled = false
+                for _, d in ipairs(devices) do
+                        if input == d.onText then
+                                local tId, cmd = d.id, d.onCommandId
+                                Communication(tId, cmd)
+                                handled = true
+                                break
+                        elseif input == d.offText then
+                                local tId, cmd = d.id, d.offCommandId
+                                Communication(tId, cmd)
+                                handled = true
+                                break
+                        end
+                end
+                -- rednet end: if not handled by device commands, check for other commands
+                if not handled then
+                        if input == "lockdown" then
+                                Communication_broadcast("facility.lockdown")
 
-                elseif input == devices[2].onText then
-                        targetId, Message = devices[2].id, devices[2].onCommandId
-                        Communication()
-                        elseif input == devices[2].offText then
-                                targetId, Message = devices[2].id, devices[2].offCommandId
-                                Communication()
+                        --rednet end
+                        elseif input == exitCode then
+                                term.setCursorPos(6,12)
+                                textutils.slowPrint("Exit Code Recognised. Exiting to Shell.")
+                                sleep(readTime)
+                                term.clear()
+                                term.setCursorPos(1, 1)
+                                return
 
-                elseif input == "lockdown" then
-                        Message = "facility.lockdown"
-                        Communication_broadcast()
+                        elseif input == "get_id" then
+                                local pcid = os.getComputerID()
+                                term.setCursorPos(11,12)
+                                textutils.slowPrint("The id of this computer is "..pcid..".")
+                                sleep(readTime)
 
-                --rednet end
-                elseif input == exitCode then
-                        term.setCursorPos(6,12)
-                        textutils.slowPrint("Exit Code Recognised. Exiting to Shell.")
-                        sleep(readTime)
-                        term.clear()
-                        term.setCursorPos(1, 1)
-                        return
+                        elseif input == "lock" then
+                                term.setCursorPos(17,12)
+                                textutils.slowPrint("Locking Computer.")
+                                sleep(readTime)
+                                os.reboot()
 
-                elseif input == "get id" then
-                        local pcid = os.getComputerID()
-                        term.setCursorPos(11,12)
-                        textutils.slowPrint("The id of this computer is "..pcid..".")
-                        sleep(readTime)
-
-                elseif input == "lock" then
-                        term.setCursorPos(17,12)
-                        textutils.slowPrint("Locking Computer.")
-                        sleep(readTime)
-                        os.reboot()
-
-                elseif input == "help" then
-                        HelpUI()
-                        os.pullEvent("key")
-                        --Page 2, 3 etc.
-                        goto continue
-                else
-                        term.setCursorPos(18,12)
-                        term.setTextColor(colors.red)
-                        textutils.slowPrint("Invalid Command.")
-                        sleep(readTime)
+                        elseif input == "help" then
+                                HelpUI()
+                                os.pullEvent("key")
+                                --Page 2, 3 etc.
+                                goto continue
+                        else
+                                term.setCursorPos(18,12)
+                                term.setTextColor(colors.red)
+                                textutils.slowPrint("Invalid Command.")
+                                sleep(readTime)
+                        end
                 end
                 ::continue::
         end
