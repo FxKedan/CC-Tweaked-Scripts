@@ -4,6 +4,7 @@ local exitCode = "potato"
 local readTime = 1
 local Protocol = "Arcdoor_Inc_Main"
 local FastBoot = true
+local SpeakerId = 9
 os.pullEvent = os.pullEventRaw
 peripheral.find("modem", rednet.open)
 
@@ -143,7 +144,7 @@ term.clear()
 term.setTextColor(color)
 term.setCursorPos(19,8)
 print("Connecting...")
-rednet.send(9, "speaker.connecting", Protocol)
+rednet.send(SpeakerId, "speaker.connecting", Protocol)
 term.setCursorPos(18,10)
 print("[             ]")
 term.setCursorPos(19,10)
