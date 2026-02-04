@@ -140,6 +140,30 @@ function HelpUI()
         print("---------------------------------------------------")
 end
 
+function HelpUI_2()
+        term.clear()
+        term.setCursorPos(1,1)
+        term.setTextColor(color)
+        print("---------------------------------------------------")
+        print("------------------COMMAND LIBRARY------------------")
+        print("---------------------------------------------------")
+        print("--   ARCDOOR INDUSTRIES (TM) TERMLINK PROTOCOL   --")
+        print("--                                               --")
+        print("-- shutdown                                      --")
+        print("--                                               --")
+        print("--                                               --")
+        print("--                                               --")
+        print("--                                               --")
+        print("--                                               --")
+        print("--                                               --")
+        print("--                                               --")
+        print("--           Press any key to continue           --")
+        print("--                                               --")
+        print("-- ARCDOOR / OMNI LABS           UI Model 2.1.37 --")
+        print("---------------------------------------------------")
+        print("---------------------------------------------------")
+end
+
 term.clear()
 term.setTextColor(color)
 term.setCursorPos(19,8)
@@ -206,8 +230,15 @@ if input == password then
                         elseif input == "help" then
                                 HelpUI()
                                 os.pullEvent("key")
+                                HelpUI_2()
+                                os.pullEvent("key")
                                 --Page 2, 3 etc.
                                 goto continue
+                        
+                        elseif input == "shutdown" then
+                                animateDots(18, 13, "Shutting down", 2, color)
+                                os.shutdown()
+                                
                         else
                                 term.setCursorPos(18,13)
                                 term.setTextColor(colors.red)

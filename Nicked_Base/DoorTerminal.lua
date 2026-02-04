@@ -132,7 +132,7 @@ function HelpUI()
         print("-- get_id                                        --")
         print("-- lock                                          --")
         print("-- call_elevator                                 --")
-        print("--                                               --")
+        print("-- shutdown                                      --")
         print("--                                               --")
         print("--           Press any key to continue           --")
         print("--                                               --")
@@ -212,6 +212,11 @@ if input == password then
                                 os.pullEvent("key")
                                 --Page 2, 3 etc.
                                 goto continue
+
+                        elseif input == "shutdown" then
+                                animateDots(18, 13, "Shutting down", 2, color)
+                                os.shutdown()
+
                         else
                                 term.setCursorPos(18,13)
                                 term.setTextColor(colors.red)
