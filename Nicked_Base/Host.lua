@@ -4,7 +4,7 @@ local exitCode = "potato"
 local readTime = 1
 local Protocol = "Arcdoor_Inc_Main"
 local FastBoot = true
-local SpeakerId = 9
+local SpeakerId = 37
 os.pullEvent = os.pullEventRaw
 peripheral.find("modem", rednet.open)
 
@@ -17,11 +17,11 @@ end
 --Table of possible receivers
 local devices = {
   [1] = {
-    id = 1,
-    onCommandId = "example.on",
-    offCommandId = "example.off",
-    onText = "startup example",
-    offText = "shutdown example",
+    id = 35,
+    onCommandId = "ts01.bulkhead.open",
+    offCommandId = "ts01.bulkhead.close",
+    onText = "open ts01",
+    offText = "close ts01",
   },
   [2] = {
     id = 2,
