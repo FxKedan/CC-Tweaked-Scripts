@@ -29,8 +29,8 @@ local INVERT_PITCH     = false
 local INVERT_ROLL      = false
 
 local GAINS = {
-    pitch = { kp = 2.50, ki = 0.00, kd = 0.5, iLimit = 0.0 },
-    roll  = { kp = 2.50, ki = 0.00, kd = 0.5, iLimit = 0.0 },
+    pitch = { kp = 1.50, ki = 0.00, kd = 0.5, iLimit = 0.0 },
+    roll  = { kp = 1.50, ki = 0.00, kd = 0.5, iLimit = 0.0 },
     alt   = { kp = 1.80, ki = 0.20, kd = 0.80, iLimit = 30.0 }
 }
 
