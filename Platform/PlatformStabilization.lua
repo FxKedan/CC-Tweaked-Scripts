@@ -31,7 +31,7 @@ local INTEGRAL_BLEED        = 0.3
 
 -- Motor limits
 local LIFT_THRUSTER_MIN, LIFT_THRUSTER_MAX = 7, 100  -- Your big central engine
-local CTRL_THRUSTER_MIN, CTRL_THRUSTER_MAX = 7, 50   -- Your corner RCS thrusters
+local CTRL_THRUSTER_MIN, CTRL_THRUSTER_MAX = 7, 100   -- Your corner RCS thrusters
 
 -- Workload Distribution (70% Main Engine, 30% Control Thrusters)
 local LIFT_RATIO = 0.70
