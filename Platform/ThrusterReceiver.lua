@@ -36,7 +36,4 @@ while true do
         -- Use string.format to keep it rounded to 2 decimal places
         print(string.format("Current Thrust: %.2f%%", receivedThrust))
     end
-
-    local currentThrust = thruster.getPower()
-    rednet.broadcast(currentThrust, "thruster_status_" .. thrusterID)
 end

@@ -30,8 +30,8 @@ local DISTURBANCE_THRESHOLD = 3.0
 local INTEGRAL_BLEED        = 0.3
 
 -- Motor limits
-local LIFT_THRUSTER_MIN, LIFT_THRUSTER_MAX = 7, 100  -- Your big central engine
-local CTRL_THRUSTER_MIN, CTRL_THRUSTER_MAX = 7, 100   -- Your corner RCS thrusters
+local LIFT_THRUSTER_MIN, LIFT_THRUSTER_MAX = 0, 100  -- Your big central engine
+local CTRL_THRUSTER_MIN, CTRL_THRUSTER_MAX = 0, 100   -- Your corner RCS thrusters
 
 -- Workload Distribution (70% Main Engine, 30% Control Thrusters)
 local LIFT_RATIO = 0.70
@@ -41,11 +41,10 @@ local CTRL_RATIO = 0.30
 local ALT_CORR_MIN, ALT_CORR_MAX = -100, 100
 local ALT_INTEG_MIN, ALT_INTEG_MAX = -60, 60
 
--- k: max thrust capacity (in Newtons/force units) when throttle is 1.0:
+-- k: max thrust capacity (in Newtons) when throttle is 1.0:
 --    thrust = k * throttle
-local k                  = nil
-local K_MIN_THROTTLE     = 0.05 -- Ignore updates below 5% throttle to avoid division by near-zero noise
-local K_ALPHA            = 0.05 -- Exponential moving average filter factor
+local k_main = 30240
+local k_ctrl = 8320
 
 -- SETUP
 local pid     = require("pid")
@@ -102,38 +101,20 @@ local function setThrusterOutput(N, NE, E, SE, S, SW, W, NW, Lift)
     rednet.broadcast(Lift, "thruster_main")
 end
 
--- Default maximum thrust (N) used if k hasn't been estimated yet
-local FALLBACK_MAX_THRUST = 5000 
-
 --- Calculates feedforward throttle signal needed to hover/maintain weight
 local function getFeedforward(mass, gravity)
     local targetForce = mass * gravity
-    local maxThrust = k or FALLBACK_MAX_THRUST
-    
-    if maxThrust <= 0 then return 0 end
-    return targetForce / maxThrust
-end
+    local liftForce = targetForce * LIFT_RATIO
+    local ctrlForce = (targetForce * CTRL_RATIO) / 8
+    local liftThrottle = liftForce / k_main
+    local ctrlThrottle = ctrlForce / k_ctrl
 
---- Dynamically estimates effective max thrust (k) based on actual vertical acceleration
-local function updateK(mass, gravity, vertAccel, currentThrottle)
-    if currentThrottle == nil or currentThrottle < K_MIN_THROTTLE then return end
-    
-    local actualThrust = mass * (gravity + vertAccel)
-    if actualThrust <= 0 then return end
-    
-    local kNew = actualThrust / currentThrottle
-    
-    if k == nil then
-        k = kNew
-    else
-        k = k * (1 - K_ALPHA) + kNew * K_ALPHA
-    end
+    return liftThrottle, ctrlThrottle
 end
 
 -- Control loop
 local function controlLoop()
     local lastTime = os.clock()
-    local lastCommandedBase = 100 -- Start with a guess of 100 for the master lever
     local prevVelY = 0
 
     while true do
@@ -157,13 +138,12 @@ local function controlLoop()
         --local acceleration = gimbal.getLinearAcceleration()
         --local vertAccel    = math.abs(acceleration[2])
 
-        -- Update K using the commanded throttle from the previous tick
-        updateK(mass, gravity, vertAccel, lastCommandedBase / 100)
-
         -- Altitude
-        local ff      = getFeedforward(mass, gravity) * LIFT_THRUSTER_MAX
+        local liftThrottle, ctrlThrottle = getFeedforward(mass, gravity)
+        local liftThrottle, ctrlThrottle = liftThrottle * 100, ctrlThrottle * 100
         local altCorr = altPID:step(pos_y, dt) - ALT_KD * velY
-        local baseThrust = ff + altCorr
+        local liftBase = liftThrottle + (altCorr * LIFT_RATIO)
+        local ctrlBase = ctrlThrottle + (altCorr * CTRL_RATIO)
 
         -- Stabilization
         local tiltErr = gimbal.getAngles()
@@ -188,19 +168,14 @@ local function controlLoop()
         -- Motor mixing for 8-axis octagonal setup + 1 Central Lift
         -- Note: If axes are inverted, simply swap the + and - for pitchOutput or rollOutput here.
         -- Lift motor handles the vertical Feedforward and Altitude PID
-        local Lift = clamp(baseThrust, LIFT_THRUSTER_MIN, LIFT_THRUSTER_MAX)
 
         -- Control thrusters need an "idle" state (e.g., halfway to their max) 
         -- so they can throttle up to push a corner up, or throttle down to drop a corner.
         local diagPitch = pitchOutput * 0.707
         local diagRoll  = rollOutput * 0.707
 
-        -- Distribute the altitude workload 
-        local liftBase = baseThrust * LIFT_RATIO
-        local ctrlBase = baseThrust * CTRL_RATIO
-
         -- The central engine only handles its share of the altitude base
-        local Lift = clamp(liftBase, LIFT_THRUSTER_MIN, LIFT_THRUSTER_MAX)
+        local Lift = liftBase
 
         -- The control thrusters combine their share of the altitude base with the PID stabilization
         local N  = clamp(ctrlBase + pitchOutput, CTRL_THRUSTER_MIN, CTRL_THRUSTER_MAX)
@@ -215,31 +190,35 @@ local function controlLoop()
 
         setThrusterOutput(N, NE, E, SE, S, SW, W, NW, Lift)
         
-        -- Save the Master Lever for the K estimator's next tick
-        lastCommandedBase = baseThrust
+        local k = k_main + (k_ctrl * 8)  -- Total thrust capacity
+        local ff_ctrl = ctrlThrottle
 
         -- Display update
         displayLine(1,  "Target: " .. TARGET_ALT .. " m")
         displayLine(2,  string.format("Alt:   %6.2f m",    pos_y))
         displayLine(3,  string.format("Err:  %+6.2f m",    TARGET_ALT - pos_y))
-        displayLine(4,  string.format("FF:   %+6.2f",  ff))
-        displayLine(5,  string.format("Corr: %+6.2f",  altCorr))
-        displayLine(6,  string.format("Base: %+6.2f",  baseThrust))
-        displayLine(7,  string.format("Roll: %+6.2f deg / Out: %+5.1f", rollErr, rollOutput))
-        displayLine(8,  string.format("Ptch: %+6.2f deg / Out: %+5.1f", pitchErr, pitchOutput))
+        displayLine(4,  string.format("FF Lift:   %+6.2f",  liftThrottle))
+        displayLine(5,  string.format("FF Ctrl:   %+6.2f",  ff_ctrl))
+        displayLine(6,  string.format("Corr: %+6.2f",  altCorr))
+        displayLine(7,  string.format("Lift Base: %+6.2f",  liftBase))
+        displayLine(8,  string.format("Ctrl Base: %+6.2f",  ctrlBase))
+        displayLine(9,  string.format("Lift Throttle: %+6.2f",  liftThrottle))
+        displayLine(10, string.format("Ctrl Throttle: %+6.2f",  ctrlThrottle))
+        displayLine(11, string.format("Roll: %+6.2f deg / Out: %+5.1f", rollErr, rollOutput))
+        displayLine(12, string.format("Ptch: %+6.2f deg / Out: %+5.1f", pitchErr, pitchOutput))
         
         -- Updated thruster display for the octagonal array
-        displayLine(9,  string.format("N:%+4.0f S:%+4.0f E:%+4.0f W:%+4.0f", N, S, E, W))
-        displayLine(10, string.format("NE:%+4.0f NW:%+4.0f SE:%+4.0f SW:%+4.0f", NE, NW, SE, SW))
-        displayLine(11, string.format("Lift: %+4.0f", Lift))
+        displayLine(13,  string.format("N:%+4.0f S:%+4.0f E:%+4.0f W:%+4.0f", N, S, E, W))
+        displayLine(14, string.format("NE:%+4.0f NW:%+4.0f SE:%+4.0f SW:%+4.0f", NE, NW, SE, SW))
+        displayLine(15, string.format("Lift: %+4.0f", Lift))
         
-        displayLine(12, k and string.format("K:  %.6f", k) or "K:  (warmup)")
-        displayLine(13, string.format("CoM: %.2f %.2f %.2f", com[1], com[2], com[3]))
-        displayLine(14, string.format("Mass: %.2f kg", mass))
-        displayLine(15, string.format("Grav: %.2f m/s²", gravity))
-        displayLine(16, string.format("Weight: %.2f N", mass * gravity))
-        displayLine(17, string.format("VelY: %.2f m/s", velY))
-        displayLine(18, string.format("VertAccel: %.2f m/s²", vertAccel))
+        displayLine(16, string.format("K:  %.6f", k) or "K:  (warmup)")
+        displayLine(17, string.format("CoM: %.2f %.2f %.2f", com[1], com[2], com[3]))
+        displayLine(18, string.format("Mass: %.2f kg", mass))
+        --displayLine(19, string.format("Grav: %.2f m/s²", gravity))
+        --displayLine(20, string.format("Weight: %.2f N", mass * gravity))
+        --displayLine(21, string.format("VelY: %.2f m/s", velY))
+        --displayLine(22, string.format("VertAccel: %.2f m/s²", vertAccel))
 
         sleep(0.05)
     end
